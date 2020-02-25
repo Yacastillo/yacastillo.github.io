@@ -36,19 +36,19 @@
 		//embedded_svc.settings.prepopulatedPrechatFields = {}; //Sets the auto-population of pre-chat form fields
 		//embedded_svc.settings.fallbackRouting = []; //An array of button IDs, user IDs, or userId_buttonId
 		//embedded_svc.settings.offlineSupportMinimizedText = '...'; //(Defaults to Contact Us)
-embedded_svc.snippetSettingsFile.extraPrechatInfo = [{
+embedded_svc.settings.extraPrechatInfo = [{
 	"entityFieldMaps":[{
 		"doCreate":false,
 		"doFind":true,
-		"fieldName":["LastName"],
+		"fieldName":"LastName",
 		"isExactMatch":true,
-		"label":"Last Name"
+		"label":"LastName"
 	},
 	{"doCreate":false,
 	 "doFind":true,
-	 "fieldName":["FirstName"],
+	 "fieldName":"FirstName",
 	 "isExactMatch":true,
-	 "label":"First Name"
+	 "label":"FirstName"
 	}, 
 	{"doCreate":false,
 	 "doFind":true,
