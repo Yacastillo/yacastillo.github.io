@@ -1,0 +1,144 @@
+<html>
+<body>
+<h>Testing Toyota</h>
+    <!--HTML-->
+    <center>
+        <input type="button" class="btn chatButton offline" onClick="openChat();" value="Unavailable" disabled="true"/> 
+    </center>
+
+    <!--CSS-->
+    <style type='text/css'>
+        .embeddedServiceHelpButton .helpButton .uiButton{
+            background-color: #000000;
+            font-family: "Arial", sans-serif;
+        }
+        .embeddedServiceHelpButton .helpButton .uiButton:focus{
+            outline: 1px solid #000000;
+        }
+        .available {
+            color: blue !important;
+        }
+        .offline {
+            color: red !important;
+        }
+    </style>
+
+
+    <!--JS-->
+    <script type='text/javascript' src='https://service.force.com/embeddedservice/5.0/esw.min.js'></script>
+    <script type='text/javascript'>
+
+        const initESW = gslbBaseURL => {
+            //embedded_svc config
+            embedded_svc.settings.displayHelpButton = false; //Or false
+            embedded_svc.settings.language = ''; //For example, enter 'en' or 'en-US'
+            embededAddEventHandler('onChatEndedByChasitor');
+            embededAddEventHandler('onChatEndedByAgent');
+            embedded_svc.settings.extraPrechatInfo = [{
+                "entityFieldMaps": [
+                    {
+                        "doCreate":false,
+                        "doFind":true,
+                        "fieldName":"LastName",
+                        "isExactMatch":true,
+                        "label":"Last Name"
+                    }, 
+                    {
+                        "doCreate":false,
+                        "doFind":true,
+                        "fieldName":"FirstName",
+                        "isExactMatch":true,
+                        "label":"First Name"
+                    }, 
+                    {
+                        "doCreate":false,
+                        "doFind":true,
+                        "fieldName":"Email",
+                        "isExactMatch":true,
+                        "label":"Email"
+                    }, 
+                    {
+                        "doCreate":false,
+                        "doFind":true,
+                        "fieldName":"HomePhone",
+                        "isExactMatch":true,
+                        "label":"Primary Phone"
+                    }
+                ],
+                "entityName":"Contact"
+            }];
+            embedded_svc.settings.enabledFeatures = ['LiveAgent'];
+            embedded_svc.settings.entryFeature = 'LiveAgent';
+
+            //This should be updated based on the orgfor which it's deployed. The values can be part of config file and cen be referred here                
+            embedded_svc.init(
+            'https://gep-tmna--sentlqa2.my.salesforce.com',
+            'https://sentlqa2-gep-tmna.cs29.force.com/LexuscustomerService',
+            gslbBaseURL,
+            '00D0r0000000qRS',
+            'Digital_Communication_Chat',
+            {
+                baseLiveAgentContentURL: 'https://c.la3-c1cs-ia2.salesforceliveagent.com/content',
+                deploymentId: '5720r00000000G9',
+                buttonId: '5730r00000000GY',
+                baseLiveAgentURL: 'https://d.la3-c1cs-ia2.salesforceliveagent.com/chat',
+                eswLiveAgentDevName: 'Digital_Communication_Chat',
+                isOfflineSupportEnabled: true
+            }
+        );
+
+            //Function to add multiple event handler
+            function embededAddEventHandler(eventName){
+                embedded_svc.addEventHandler(eventName, data => setTimeout( () => {
+                    const postChatSelector = document.querySelector('.embeddedServiceLiveAgentStateChatEventMessage > div.eventMessage > div.uiOutputRichText');
+                    if(postChatSelector.innerHTML == 'Chat Ended' || postChatSelector.innerHTML == 'Chat Ended by Agent'){
+                        postChatSelector.innerHTML = 'Thank you for visiting Lexus Chat!';
+                    }
+                }, 1000, data));
+            }
+        }
+
+        const toggleButtonState = () => {
+            const message = document.querySelector('.helpButtonLabel > span.message');
+            const chatButton = document.querySelector('.chatButton');
+            if(message.innerText == 'Contact Us'){
+                chatButton.setAttribute('disabled', true);
+                chatButton.classList.remove('available');
+                chatButton.classList.add('offline');
+                chatButton.setAttribute('value', 'Unavailable');
+            } else {
+                chatButton.removeAttribute('disabled');
+                chatButton.classList.remove('offline');
+                chatButton.classList.add('available');
+                chatButton.setAttribute('value', 'Available');
+            }
+        }
+
+        function openChat(){
+            document.querySelector("#helpButtonSpan > span.message").click();
+        }
+    
+        //--Main
+        window.addEventListener("load", () => {
+            //Load script && init
+            if (!window.embedded_svc) {
+                var s = document.createElement('script');								  
+                s.setAttribute('src', 'https://gep-tmna--sentldev.my.salesforce.com/embeddedservice/5.0/esw.min.js');
+                s.onload = () => initESW(null);
+                document.body.appendChild(s);
+            } else {
+                initESW('https://service.force.com');
+            }
+                                
+            setTimeout(()=>{
+                //Toggle CSS classes
+                toggleButtonState();
+                //Add DOMSubtreeModified event
+                document.querySelector('.helpButtonLabel > span.message').addEventListener('DOMSubtreeModified', toggleButtonState);
+            }, 1000);
+            
+        });
+    
+    </script>
+</body>
+</html>
